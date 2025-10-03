@@ -15,7 +15,6 @@ const WorkSpaceLayout = ({
         <AppHeader />
         {children}
       </div>
-      ;
     </SidebarProvider>
   );
 };

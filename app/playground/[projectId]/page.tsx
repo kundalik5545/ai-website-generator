@@ -33,7 +33,6 @@ const Playground = () => {
   const frameId = params.get("frameId");
 
   useEffect(() => {
-    console.log("Running useEffect for GetFramesDetails");
     frameId && GetFrameDetails();
   }, [frameId]);
 
@@ -41,8 +40,12 @@ const Playground = () => {
   const GetFrameDetails = async () => {
     try {
       const result = await axios.get(
-        "/api/frames?frameId=" + frameId + "&projectId=" + projectId
+        `/api/frames?frameId=${frameId}&projectId=${projectId}`
       );
+
+      console.log("Frame API Result:", result.data);
+      if (!result.data) return;
+
       setFrameDetails(result.data);
 
       // Send the first user message to AI to get response
@@ -138,6 +141,9 @@ const Playground = () => {
     });
   };
 
+  useEffect(() => {
+    console.log("Generated Code:", generatedCode);
+  }, [generatedCode]);
   return (
     <div>
       <PlaygoundHeader />
@@ -151,7 +157,7 @@ const Playground = () => {
         />
 
         {/* Website Design section */}
-        <WebsiteDesign />
+        <WebsiteDesign generatedCode={generatedCode} />
 
         {/* Settings section */}
         {selectedElement && <ElementSetting />}

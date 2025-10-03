@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
+import { SignInButton } from "@clerk/nextjs";
 
 function Header() {
   const MenuOptions = [
@@ -26,7 +27,9 @@ function Header() {
       </div>
 
       {/* Get Started */}
-      <Button variant="ghost">Get Started</Button>
+      <SignInButton mode="modal" forceRedirectUrl={"/workplace"}>
+        <Button variant="ghost">Get Started</Button>
+      </SignInButton>
     </div>
   );
 }

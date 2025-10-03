@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   User,
 } from "lucide-react";
+import { SignInButton } from "@clerk/nextjs";
 
 function Hero() {
   const [userInput, setUserInput] = useState<string>();
@@ -60,9 +61,11 @@ function Hero() {
             <ImagePlus />
           </Button>
 
-          <Button>
-            <ArrowUp />
-          </Button>
+          <SignInButton mode="modal" forceRedirectUrl={"/workplace"}>
+            <Button disabled={!userInput}>
+              <ArrowUp />
+            </Button>
+          </SignInButton>
         </div>
       </div>
 

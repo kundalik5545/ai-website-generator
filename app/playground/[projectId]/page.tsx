@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import PlaygoundHeader from "../_components/PlaygoundHeader";
-import ChatSection from "../_components/ChatSection";
-import WebsiteDesign from "../_components/WebsiteDesign";
-import ElementSetting from "../_components/ElementSetting";
-import { useParams, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { Loader2Icon } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import ChatSection from "../_components/ChatSection";
+import ElementSetting from "../_components/ElementSetting";
+import PlaygoundHeader from "../_components/PlaygoundHeader";
+import WebsiteDesign from "../_components/WebsiteDesign";
+import { aiWebGenPrompt } from "@/prompt/Prompt";
 
 export type Frame = {
   frameId: string;
@@ -24,6 +24,10 @@ export type Messages = {
 const Playground = () => {
   const [selectedElement] = useState(false);
   const [frameDetails, setFrameDetails] = useState<Frame>();
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Messages[]>([]);
+  const [generatedCode, setGeneratedCode] = useState<any>();
+
   const { projectId } = useParams();
   const params = useSearchParams();
   const frameId = params.get("frameId");
@@ -33,6 +37,7 @@ const Playground = () => {
     frameId && GetFrameDetails();
   }, [frameId]);
 
+  // Get Frame details from DB with chat messages
   const GetFrameDetails = async () => {
     try {
       const result = await axios.get(
@@ -47,13 +52,84 @@ const Playground = () => {
     }
   };
 
+  // Send message to AI and get response
+  const SendMessage = async (userInput: string) => {
+    setLoading(true);
+    setMessages((prev) => [...prev, { role: "user", content: userInput }]);
+
+    const result = await fetch("/api/ai-model", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user",
+            content: aiWebGenPrompt?.replace("{userInput}", userInput),
+          },
+        ],
+      }),
+    });
+
+    const reader = result.body?.getReader();
+    const decoder = new TextDecoder();
+
+    let aiResponse = "";
+
+    let isCode = false;
+    while (true) {
+      // @ts-ignore
+      const { done, value } = await reader?.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      aiResponse += chunk;
+
+      console.log("AI Response Chunk:", chunk);
+
+      // Handle code generation streaming
+      // If AI start sending code or not
+      if (!isCode && aiResponse.includes("```html")) {
+        isCode = true;
+        const index = aiResponse.indexOf("```html") + 7;
+        const initialCodeChunk = aiResponse.slice(index);
+        setGeneratedCode((prev: any) => prev + initialCodeChunk);
+      } else if (isCode) {
+        console.log("AI Response Chunk:", chunk);
+        setGeneratedCode((prev: any) => prev + chunk);
+      }
+    }
+
+    // After streaming end
+    if (!isCode) {
+      setMessages((prev: any) => [
+        ...prev,
+        { role: "assistant", content: aiResponse },
+      ]);
+    } else {
+      setMessages((prev: any) => [
+        ...prev,
+        { role: "assistant", content: "Your code is ready!" },
+      ]);
+    }
+    setLoading(false);
+  };
+
+  // Generated code change log
+  useEffect(() => {
+    console.log("Generated Code:", generatedCode);
+    return () => {};
+  }, [generatedCode]);
+
   return (
     <div>
       <PlaygoundHeader />
 
       <div className="flex gap-4">
         {/* Chat Section */}
-        <ChatSection messages={frameDetails?.chatMessages ?? []} />
+        <ChatSection
+          messages={messages ?? []}
+          onSend={(input: string) => SendMessage(input)}
+          loading={loading}
+        />
 
         {/* Website Design section */}
         <WebsiteDesign />

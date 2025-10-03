@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import ChatSection from "../_components/ChatSection";
 import ElementSetting from "../_components/ElementSetting";
 import PlaygoundHeader from "../_components/PlaygoundHeader";
@@ -44,6 +44,13 @@ const Playground = () => {
         "/api/frames?frameId=" + frameId + "&projectId=" + projectId
       );
       setFrameDetails(result.data);
+
+      // Send the first user message to AI to get response
+      if (result.data?.chatMessages?.length == 1) {
+        const userMsg = result.data?.chatMessages[0].content;
+        SendMessage(userMsg);
+      }
+
       console.log("Frame Details are", result.data);
     } catch (error) {
       console.error(
@@ -100,6 +107,7 @@ const Playground = () => {
 
     // After streaming end
     if (!isCode) {
+      console.log("AI Response streaming end:");
       setMessages((prev: any) => [
         ...prev,
         { role: "assistant", content: aiResponse },

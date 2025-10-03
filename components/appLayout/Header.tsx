@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 function Header() {
+  const { user } = useUser();
   const MenuOptions = [
     { name: "Pricing", path: "/pricing" },
     { name: "Contact", path: "/contact-us" },
@@ -27,9 +30,17 @@ function Header() {
       </div>
 
       {/* Get Started */}
-      <SignInButton mode="modal" forceRedirectUrl={"/workplace"}>
-        <Button variant="ghost">Get Started</Button>
-      </SignInButton>
+      <div className="">
+        {!user ? (
+          <SignInButton mode="modal" forceRedirectUrl={"/workplace"}>
+            <Button variant="ghost">Get Started</Button>
+          </SignInButton>
+        ) : (
+          <Link href={"/workspace"}>
+            <Button variant="ghost">Get Started</Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

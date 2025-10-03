@@ -1,4 +1,5 @@
 import Header from "@/components/appLayout/Header";
+import Hero from "@/components/appLayout/Hero";
 
 export default function Home() {
   return (
@@ -6,9 +7,8 @@ export default function Home() {
       {/* Header */}
       <Header />
 
-      {/* Contact & Price */}
-
-      {/* Get Started  */}
+      {/* Hero Section */}
+      <Hero />
     </div>
   );
 }

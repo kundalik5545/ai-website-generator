@@ -1,13 +1,13 @@
 "use client";
+import { aiWebGenPrompt } from "@/prompt/Prompt";
 import axios from "axios";
 import { useParams, useSearchParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import ChatSection from "../_components/ChatSection";
 import ElementSetting from "../_components/ElementSetting";
 import PlaygoundHeader from "../_components/PlaygoundHeader";
 import WebsiteDesign from "../_components/WebsiteDesign";
-import { aiWebGenPrompt } from "@/prompt/Prompt";
-import { toast } from "sonner";
 
 export type Frame = {
   frameId: string;
@@ -155,7 +155,7 @@ const Playground = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-screen w-full overflow-hidden">
       <PlaygoundHeader />
 
       <div className="flex gap-4">

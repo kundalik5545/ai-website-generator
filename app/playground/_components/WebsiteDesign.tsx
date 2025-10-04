@@ -7,10 +7,11 @@ type Props = {
 const WebsiteDesign = ({ generatedCode }: Props) => {
   return (
     <div className="flex-1 p-5 h-[91vh] overflow-auto">
-      <div
-        className=""
-        dangerouslySetInnerHTML={{
-          __html: `
+      {generatedCode && generatedCode.length > 0 ? (
+        <div
+          className=""
+          dangerouslySetInnerHTML={{
+            __html: `
           <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -69,8 +70,38 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
               ${generatedCode} 
             </html>
         `,
-        }}
-      ></div>
+          }}
+        ></div>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto bg-blue-100 rounded-lg dark:bg-blue-900">
+              <svg
+                className="w-6 h-6 text-blue-600 dark:text-blue-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </div>
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
+              Website Preview
+            </h5>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-center">
+              Your website template will appear here.
+              <br /> Please wait AI is generating your code.
+            </p>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

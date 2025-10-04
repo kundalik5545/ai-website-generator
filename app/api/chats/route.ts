@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
-  const { messages, frameId, projectId } = await req.json();
+  const { messages, frameId } = await req.json();
 
   await db
     .update(chatTable)

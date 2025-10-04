@@ -43,7 +43,7 @@ const Playground = () => {
         `/api/frames?frameId=${frameId}&projectId=${projectId}`
       );
 
-      // Check if data exists
+      console.log("Frame API Result:", result.data);
       if (!result.data) return;
 
       setFrameDetails(result.data);
@@ -55,6 +55,8 @@ const Playground = () => {
       } else {
         setMessages(result.data?.chatMessages);
       }
+
+      console.log("Frame Details are", result.data);
     } catch (error) {
       console.error(
         error instanceof Error ? error.message : "An error occurred"
@@ -65,9 +67,7 @@ const Playground = () => {
   // Send message to AI and get response
   const SendMessage = async (userInput: string) => {
     setLoading(true);
-
-    // Add user message to chat
-    setMessages((prev: any) => [...prev, { role: "user", content: userInput }]);
+    setMessages((prev) => [...prev, { role: "user", content: userInput }]);
 
     const result = await fetch("/api/ai-model", {
       method: "POST",
@@ -88,6 +88,13 @@ const Playground = () => {
     let isCode = false;
     let messageIndex = -1;
 
+    // Add initial AI message for streaming
+    setMessages((prev) => {
+      const newMessages = [...prev, { role: "assistant", content: "" }];
+      messageIndex = newMessages.length - 1;
+      return newMessages;
+    });
+
     while (true) {
       // @ts-ignore
       const { done, value } = await reader?.read();
@@ -101,31 +108,48 @@ const Playground = () => {
         isCode = true;
         const index = aiResponse.indexOf("```html") + 7;
         const initialCodeChunk = aiResponse.slice(index);
-        setGeneratedCode((prev: any) => (prev || "") + initialCodeChunk);
+        setGeneratedCode(initialCodeChunk);
+
+        // Update message to show code is being generated
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[messageIndex] = {
+            role: "assistant",
+            content: "Generating your code...",
+          };
+          return updated;
+        });
       } else if (isCode) {
         // Stream code updates
         setGeneratedCode((prev: any) => (prev || "") + chunk);
+      } else {
+        // Stream text response in real-time
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[messageIndex] = { role: "assistant", content: aiResponse };
+          return updated;
+        });
       }
     }
 
     // After streaming end
-    if (!isCode) {
-      setMessages((prev: any) => [
-        ...prev,
-        { role: "assistant", content: aiResponse },
-      ]);
-    } else {
-      setMessages((prev: any) => [
-        ...prev,
-        { role: "assistant", content: "Your code is ready!" },
-      ]);
+    if (isCode) {
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[messageIndex] = {
+          role: "assistant",
+          content: "Your code is ready!",
+        };
+        return updated;
+      });
     }
+
     setLoading(false);
   };
 
   // Generated code change log
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length > 0 && !loading) {
       SaveMessages();
     }
   }, [messages]);
@@ -134,13 +158,13 @@ const Playground = () => {
     await axios.put("/api/chats", {
       messages: messages,
       frameId: frameId,
+      projectId: projectId,
     });
   };
 
   useEffect(() => {
-    console.log("Generated Code In Page:", generatedCode);
+    console.log("Generated Code:", generatedCode);
   }, [generatedCode]);
-
   return (
     <div>
       <PlaygoundHeader />

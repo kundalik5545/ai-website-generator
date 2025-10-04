@@ -7,6 +7,7 @@ import ElementSetting from "../_components/ElementSetting";
 import PlaygoundHeader from "../_components/PlaygoundHeader";
 import WebsiteDesign from "../_components/WebsiteDesign";
 import { aiWebGenPrompt } from "@/prompt/Prompt";
+import { toast } from "sonner";
 
 export type Frame = {
   frameId: string;
@@ -36,6 +37,17 @@ const Playground = () => {
     frameId && GetFrameDetails();
   }, [frameId]);
 
+  const SaveGeneratedCode = async (code: string) => {
+    const result = await axios.put("/api/frames", {
+      designCode: code,
+      frameId: frameId,
+      projectId: projectId,
+    });
+
+    console.log(result.data);
+    toast.success("Website is ready!");
+  };
+
   // Get Frame details from DB with chat messages
   const GetFrameDetails = async () => {
     try {
@@ -47,6 +59,10 @@ const Playground = () => {
       if (!result.data) return;
 
       setFrameDetails(result.data);
+      const designCode = result.data?.designCode;
+      const index = designCode?.indexOf("```html") + 7;
+      const formattedCode = designCode?.slice(index);
+      setGeneratedCode(formattedCode);
 
       // Send the first user message to AI to get response
       if (result.data?.chatMessages?.length == 1) {
@@ -107,6 +123,7 @@ const Playground = () => {
         setGeneratedCode((prev: any) => (prev || "") + chunk);
       }
     }
+    await SaveGeneratedCode(aiResponse);
 
     // After streaming end
     if (!isCode) {
@@ -136,10 +153,6 @@ const Playground = () => {
       frameId: frameId,
     });
   };
-
-  useEffect(() => {
-    console.log("Generated Code In Page:", generatedCode);
-  }, [generatedCode]);
 
   return (
     <div>

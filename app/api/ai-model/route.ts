@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY_2}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "http://localhost:3000",
           "X-Title": "My Next.js App", // optional
@@ -69,11 +69,11 @@ export async function POST(req: NextRequest) {
         "Transfer-Encoding": "chunked",
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 }
+      { error: `Something went wrong - with OpenRouter API: ${error.message}` },
+      { status: error.status || 500 }
     );
   }
 }

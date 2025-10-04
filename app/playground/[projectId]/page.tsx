@@ -86,7 +86,7 @@ const Playground = () => {
 
     let aiResponse = "";
     let isCode = false;
-    let messageIndex = -1;
+    const messageIndex = -1;
 
     while (true) {
       // @ts-ignore

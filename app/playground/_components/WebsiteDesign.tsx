@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import WebPageTools from "./WebPageTools";
+import { cn } from "@/lib/utils";
 
 type Props = {
   generatedCode: string;
@@ -6,6 +8,7 @@ type Props = {
 
 const WebsiteDesign = ({ generatedCode }: Props) => {
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const [selectedScreenSize, setSelectedScreenSize] = useState("web");
 
   // Initialieze the iframe with Tailwind, Flowbite, and other libraries
   useEffect(() => {
@@ -97,12 +100,15 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
   }, [generatedCode]);
 
   return (
-    <div className="flex-1 p-5 h-[91vh] overflow-auto">
+    <div className="flex flex-col items-center flex-1 p-5 ">
       {generatedCode && generatedCode.length > 0 ? (
         <iframe
           ref={iframeRef}
           title="Website Preview"
-          className="w-full h-full border border-red-400 rounded-lg"
+          className={cn(
+            selectedScreenSize == "web" ? "w-full" : "w-100",
+            "h-[750px] border rounded-lg"
+          )}
           sandbox="allow-scripts allow-same-origin allow-forms"
         />
       ) : (
@@ -135,6 +141,12 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
           </div>
         </div>
       )}
+
+      <WebPageTools
+        selectedScreenSize={selectedScreenSize}
+        setSelectedScreenSize={(v: string) => setSelectedScreenSize(v)}
+        generatedCode={generatedCode}
+      />
     </div>
   );
 };

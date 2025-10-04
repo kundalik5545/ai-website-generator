@@ -2,17 +2,8 @@ import React, { useEffect, useRef } from "react";
 type Props = {
   generatedCode: string;
 };
-function WebsiteDesign({ generatedCode }: Props) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Initialize iframe shell once
-  useEffect(() => {
-    if (!iframeRef.current) return;
-    const doc = iframeRef.current.contentDocument;
-    if (!doc) return;
-
-    doc.open();
-    doc.write(`
+const HTML_CODE = `
     <!DOCTYPE html>
         <html lang="en">
             <head>
@@ -49,7 +40,19 @@ function WebsiteDesign({ generatedCode }: Props) {
             </head>
             <body id="root"></body>
         </html>
-        `);
+        `;
+
+function WebsiteDesign({ generatedCode }: Props) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Initialize iframe shell once
+  useEffect(() => {
+    if (!iframeRef.current) return;
+    const doc = iframeRef.current.contentDocument;
+    if (!doc) return;
+
+    doc.open();
+    doc.write(HTML_CODE);
     doc.close();
   }, []);
 

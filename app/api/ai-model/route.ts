@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY_2}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3000",
+          "HTTP-Referer": "https://ai-website-generator-ecru.vercel.app/",
           "X-Title": "My Next.js App", // optional
         },
         responseType: "stream", // important for streaming

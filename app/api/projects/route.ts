@@ -13,19 +13,19 @@ export async function POST(req: NextRequest) {
   }
 
   //   Create project
-  const projectResult = await db.insert(projectsTable).values({
+  await db.insert(projectsTable).values({
     projectId: projectId,
     createdBy: user?.primaryEmailAddress?.emailAddress || "unknown",
   });
 
   // Create Frame
-  const frameResult = await db.insert(frameTable).values({
+  await db.insert(frameTable).values({
     frameId: frameId,
     projectId: projectId,
   });
 
   // Create Messages
-  const chatResult = await db.insert(chatTable).values({
+  await db.insert(chatTable).values({
     chatMessage: messages,
     createdBy: user?.primaryEmailAddress?.emailAddress || "unknown",
     frameId: frameId,

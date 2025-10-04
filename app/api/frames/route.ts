@@ -15,13 +15,13 @@ export async function GET(req: NextRequest) {
   const frameResult = await db
     .select()
     .from(frameTable)
-    //@ts-ignore
+    // @ts-expect-error - Drizzle ORM type inference issue
     .where(eq(frameTable.frameId, frameId));
 
   const chatResult = await db
     .select()
     .from(chatTable)
-    // @ts-ignore
+    // @ts-expect-error - Drizzle ORM type inference issue
     .where(eq(chatTable.frameId, frameId));
 
   console.log("Frame Table", frameResult);

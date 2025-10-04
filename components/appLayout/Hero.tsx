@@ -41,7 +41,12 @@ function Hero() {
         messages: messages,
       });
 
-      console.log(result.data);
+      if (!result.data) {
+        toast.error("Error creating project. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       toast.success("Project created");
 
       // Navigate to project
@@ -50,7 +55,11 @@ function Hero() {
       setUserInput("");
     } catch (error) {
       setLoading(false);
-      toast.error("internal server error");
+      toast.error(
+        `Error creating project. Please try again. ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
       console.log(error);
     }
   };

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     .where(eq(projectsTable.createdBy, user.primaryEmailAddress.emailAddress))
     .orderBy(desc(projectsTable.id));
 
-  let results: {
+  const results: {
     projectId: string;
     frameId: string;
     chats: {

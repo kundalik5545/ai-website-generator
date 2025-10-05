@@ -5,6 +5,7 @@
  */
 
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { OnSaveContext } from "@/context/OnSaveContext";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -17,7 +18,7 @@ const Provider = ({
   // user from clerk useUser hook
   const { user } = useUser();
   const [userDetails, setUserDetails] = useState<any>();
-
+  const [onSaveData, setOnSaveData] = useState<any>(null);
   //   call create user on page load
   useEffect(() => {
     user && createNewUser();
@@ -34,7 +35,9 @@ const Provider = ({
   return (
     <div>
       <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
-        {children}
+        <OnSaveContext.Provider value={{ onSaveData, setOnSaveData }}>
+          {children}
+        </OnSaveContext.Provider>
       </UserDetailContext.Provider>
     </div>
   );

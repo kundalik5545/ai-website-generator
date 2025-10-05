@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import ElementSetting from "./ElementSetting";
 import ImageSettingSection from "./ImageSettingSection";
 import WebPageTools from "./WebPageTools";
+import { OnSaveContext } from "@/context/OnSaveContext";
+import { CloudCog } from "lucide-react";
+import { on } from "events";
 
 type Props = {
   generatedCode: string;
@@ -12,6 +15,8 @@ type Props = {
 const WebsiteDesign = ({ generatedCode }: Props) => {
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const [selectedScreenSize, setSelectedScreenSize] = useState("web");
+  // On save data context
+  const { onSaveData, setOnSaveData } = React.useContext(OnSaveContext);
 
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
     null
@@ -154,6 +159,36 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
       console.error("Error setting iframe content:", error);
     }
   }, [generatedCode]);
+
+  // On save data context
+  useEffect(() => {
+    onSaveData && onSaveCode();
+  }, [onSaveData]);
+
+  // On Upadte code
+
+  const onSaveCode = () => {};
+  if (iframeRef.current) {
+    const iframeDoc =
+      iframeRef.current.contentDocument ||
+      iframeRef.current.contentWindow?.document;
+
+    if (iframeDoc) {
+      const clonedDoc = iframeDoc.documentElement.cloneNode(
+        true
+      ) as HTMLElement;
+      // Remove all outlines
+
+      const AllEls = clonedDoc.querySelectorAll<HTMLElement>("*");
+      AllEls.forEach((el) => {
+        el.style.outline = "";
+        el.style.cursor = "";
+      });
+
+      const html = clonedDoc.outerHTML;
+      console.log("clean html is : ", html);
+    }
+  }
 
   return (
     <div className="flex gap-2 w-full">

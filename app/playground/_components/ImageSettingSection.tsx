@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import React from "react";
 import ImageKit from "imagekit";
+import { set } from "react-hook-form";
+import { transform } from "next/dist/build/swc/generated-native";
 
 type Props = {
   selectedEl: HTMLImageElement;
@@ -32,10 +34,30 @@ var imagekit = new ImageKit({
 });
 
 const transformOptions = [
-  { label: "Smart Crop", value: "smartcrop", icon: <Crop /> },
-  { label: "Resize", value: "resize", icon: <Expand /> },
-  { label: "Upscale", value: "upscale", icon: <ImageUpscale /> },
-  { label: "BG Remove", value: "bgremove", icon: <ImageMinus /> },
+  {
+    label: "Smart Crop",
+    value: "smartcrop",
+    icon: <Crop />,
+    transformation: "fo-auto",
+  },
+  {
+    label: "Resize",
+    value: "resize",
+    icon: <Expand />,
+    transformation: "e-dropshadow",
+  },
+  {
+    label: "Upscale",
+    value: "upscale",
+    icon: <ImageUpscale />,
+    transformation: "e-upscale",
+  },
+  {
+    label: "BG Remove",
+    value: "bgremove",
+    icon: <ImageMinus />,
+    transformation: "e-bgremove",
+  },
 ];
 
 const ImageSettingSection = ({ selectedEl }: Props) => {
@@ -88,12 +110,26 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
 
     console.log("Upload Success:", imageRef);
     // @ts-expect-error
-    selectedEl.setAttribute("src", imageRef?.url);
+    selectedEl.setAttribute("src", imageRef?.url + "?tr=");
     setLoading(false);
   };
 
   const openFileDialog = () => {
     fieldInputRef.current?.click();
+  };
+
+  const GenerateAiImage = () => {
+    setLoading(true);
+    const url = `https://ik.imagekit.io/randomcoder/ik-genimg-prompt-${altText}/${Date.now()}.png?tr=`;
+    setPreview(url);
+    selectedEl.setAttribute("src", url);
+  };
+
+  const applyTransformations = (trValue: string) => {
+    setLoading(true);
+    const url = preview + trValue + ",";
+    setPreview(url);
+    selectedEl.setAttribute("src", url);
   };
 
   return (
@@ -110,6 +146,9 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
           alt={altText}
           className="max-w-full max-h-60 cursor-pointer mb-3"
           onClick={openFileDialog}
+          onLoad={() => {
+            setLoading(false);
+          }}
         />
       </div>
 
@@ -146,8 +185,12 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
         />
       </div>
 
-      <Button className="w-full mb-2">
-        <Sparkles />
+      <Button
+        className="w-full mb-2"
+        onClick={GenerateAiImage}
+        disabled={!altText || loading}
+      >
+        {loading ? <Loader2Icon className="animate-spin" /> : <Sparkles />}
         Generate AI Image
       </Button>
 
@@ -165,7 +208,7 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
                       type="button"
                       variant={applied ? "default" : "outline"}
                       className="flex items-center justify-between"
-                      onClick={() => toggleTransformation(opt.value)}
+                      onClick={() => applyTransformations(opt.transformation)}
                     >
                       {opt.icon}
                     </Button>

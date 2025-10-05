@@ -11,6 +11,13 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
 
 type Props = {
   selectedEl: HTMLElement | null;
@@ -194,50 +201,63 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
       <div className="flex items-center gap-4">
         <div>
           <label className="text-sm block">Background</label>
-          <input
-            type="color"
-            className="w-[40px] h-[40px] rounded-lg mt-1"
-            defaultValue={selectedEl?.style?.backgroundColor || "#ffffff"}
-            onChange={(event) =>
-              applyStyle("backgroundColor", event.target.value)
-            }
-          />
+          <InputGroup>
+            <InputGroupInput
+              type="color"
+              className="w-[40px] h-[40px] p-1"
+              defaultValue={selectedEl?.style?.backgroundColor || "#ffffff"}
+              onChange={(event) =>
+                applyStyle("backgroundColor", event.target.value)
+              }
+            />
+          </InputGroup>
         </div>
 
         <div className="flex-1">
           <label className="text-sm">Border Radius</label>
-          <Input
-            type="text"
-            placeholder="e.g. 8px"
-            defaultValue={selectedEl?.style?.borderRadius || ""}
-            onChange={(e) => applyStyle("borderRadius", e.target.value)}
-            className="mt-1"
-          />
+          <InputGroup>
+            <InputGroupInput
+              type="text"
+              placeholder="e.g. 8px"
+              defaultValue={selectedEl?.style?.borderRadius || ""}
+              onChange={(e) =>
+                applyStyle("borderRadius", e.target.value + "px")
+              }
+              className="mt-1"
+            />
+            <InputGroupAddon align="inline-end">px</InputGroupAddon>
+          </InputGroup>
         </div>
       </div>
 
       {/* Padding */}
       <div>
         <label className="text-sm">Padding</label>
-        <Input
-          type="text"
-          placeholder="e.g. 10px 15px"
-          defaultValue={selectedEl?.style?.padding || ""}
-          onChange={(e) => applyStyle("padding", e.target.value)}
-          className="mt-1"
-        />
+        <InputGroup>
+          <InputGroupInput
+            type="text"
+            placeholder="e.g. 10px 15px"
+            defaultValue={selectedEl?.style?.padding || ""}
+            onChange={(e) => applyStyle("padding", e.target.value + "px")}
+            className="mt-1"
+          />
+          <InputGroupAddon align="inline-end">px</InputGroupAddon>
+        </InputGroup>
       </div>
 
       {/* Margin */}
       <div>
         <label className="text-sm">Margin</label>
-        <Input
-          type="text"
-          placeholder="e.g. 10px 15px"
-          defaultValue={selectedEl?.style?.margin || ""}
-          onChange={(e) => applyStyle("margin", e.target.value)}
-          className="mt-1"
-        />
+        <InputGroup>
+          <InputGroupInput
+            type="text"
+            placeholder="e.g. 10px 15px"
+            defaultValue={selectedEl?.style?.margin || ""}
+            onChange={(e) => applyStyle("margin", e.target.value + "px")}
+            className="mt-1"
+          />
+          <InputGroupAddon align="inline-end">px</InputGroupAddon>
+        </InputGroup>
       </div>
 
       {/* === Class Manager === */}
@@ -271,6 +291,11 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
           <Input
             value={newClass}
             onChange={(e) => setNewClass(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                addClass();
+              }
+            }}
             placeholder="Add class ..."
           />
           <Button type="button" onClick={addClass}>

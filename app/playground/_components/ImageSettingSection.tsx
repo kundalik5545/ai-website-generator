@@ -127,9 +127,15 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
 
   const applyTransformations = (trValue: string) => {
     setLoading(true);
-    const url = preview + trValue + ",";
-    setPreview(url);
-    selectedEl.setAttribute("src", url);
+    if (!preview.includes(trValue)) {
+      const url = preview + trValue + ",";
+      setPreview(url);
+      selectedEl.setAttribute("src", url);
+    } else {
+      const url = preview.replaceAll(trValue + ",", "");
+      setPreview(url);
+      selectedEl.setAttribute("src", url);
+    }
   };
 
   return (
@@ -206,7 +212,11 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
                   <TooltipTrigger asChild>
                     <Button
                       type="button"
-                      variant={applied ? "default" : "outline"}
+                      variant={
+                        preview.includes(opt.transformation)
+                          ? "default"
+                          : "outline"
+                      }
                       className="flex items-center justify-between"
                       onClick={() => applyTransformations(opt.transformation)}
                     >

@@ -15,13 +15,21 @@ import {
   ImageMinus,
   ImagePlus,
   ImageUpscale,
+  Loader2Icon,
   Sparkles,
 } from "lucide-react";
 import React from "react";
+import ImageKit from "imagekit";
 
 type Props = {
   selectedEl: HTMLImageElement;
 };
+
+var imagekit = new ImageKit({
+  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
+  privateKey: process.env.NEXT_PUBLIC_IMAGEKIT_PRIVATE_KEY!,
+  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+});
 
 const transformOptions = [
   { label: "Smart Crop", value: "smartcrop", icon: <Crop /> },
@@ -34,6 +42,8 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
   const [altText, setAltText] = React.useState(selectedEl?.alt || "");
   const [width, setWidth] = React.useState<number>(selectedEl?.width || 300);
   const [height, setHeight] = React.useState<number>(selectedEl?.height || 300);
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [loading, setLoading] = React.useState(false);
   const [borderRadius, setBorderRadius] = React.useState(
     selectedEl?.style.borderRadius || "0px"
   );
@@ -42,6 +52,7 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
     string[]
   >([]);
   const fieldInputRef = React.useRef<HTMLInputElement>(null);
+
   // Toggle transformation options
   const toggleTransformation = (value: string) => {
     setActiveTransformation((prev) =>
@@ -51,15 +62,34 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
     );
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedImage(file);
+      // Preview the image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const saveUploadedFile = async () => {
+    if (!selectedImage) return;
+    setLoading(true);
+
+    const imageRef = await imagekit.upload({
+      // @ts-expect-error
+      file: selectedImage, //required
+      fileName: Date.now() + ".png", //required
+      isPublished: true,
+    });
+
+    console.log("Upload Success:", imageRef);
+    // @ts-expect-error
+    selectedEl.setAttribute("src", imageRef?.url);
+    setLoading(false);
   };
 
   const openFileDialog = () => {
@@ -89,7 +119,7 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
         accept="image/*"
         ref={fieldInputRef}
         className="hidden"
-        onChange={handleInputChange}
+        onChange={handleFileChange}
       />
 
       {/* File Upload button */}
@@ -97,9 +127,11 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
         type="button"
         variant={"outline"}
         className="w-full mb-3"
-        onClick={openFileDialog}
+        onClick={saveUploadedFile}
+        disabled={loading || !selectedImage}
       >
-        <ImagePlus /> Upload Image
+        {loading ? <Loader2Icon className="animate-spin" /> : <ImagePlus />}{" "}
+        Upload Image
       </Button>
 
       {/* Alt Text */}

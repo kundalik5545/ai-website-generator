@@ -1,7 +1,7 @@
 import { HTML_CODE } from "@/config/HtmlCode";
 
 export const cleanCode = (code: string) => {
-  let cleanedCode =
+  const cleanedCode =
     code
       .replaceAll("```html", "")
       .replaceAll("```", "")

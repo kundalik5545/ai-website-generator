@@ -1,12 +1,13 @@
 import { HTML_CODE } from "@/config/HtmlCode";
+import { OnSaveContext } from "@/context/OnSaveContext";
 import { cn } from "@/lib/utils";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 import ElementSetting from "./ElementSetting";
 import ImageSettingSection from "./ImageSettingSection";
 import WebPageTools from "./WebPageTools";
-import { OnSaveContext } from "@/context/OnSaveContext";
-import { CloudCog } from "lucide-react";
-import { on } from "events";
+import { useParams, useSearchParams } from "next/navigation";
 
 type Props = {
   generatedCode: string;
@@ -21,6 +22,45 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
     null
   );
+
+  const { projectId } = useParams();
+  const params = useSearchParams();
+  const frameId = params.get("frameId");
+
+  // On Save code
+  const onSaveCode = async () => {
+    let html = "";
+
+    if (iframeRef.current) {
+      const iframeDoc =
+        iframeRef.current.contentDocument ||
+        iframeRef.current.contentWindow?.document;
+
+      if (iframeDoc) {
+        const clonedDoc = iframeDoc.documentElement.cloneNode(
+          true
+        ) as HTMLElement;
+        // Remove all outlines
+
+        const AllEls = clonedDoc.querySelectorAll<HTMLElement>("*");
+        AllEls.forEach((el) => {
+          el.style.outline = "";
+          el.style.cursor = "";
+        });
+
+        html = clonedDoc.outerHTML;
+      }
+    }
+
+    const result = await axios.put("/api/frames", {
+      designCode: html,
+      frameId: frameId,
+      projectId: projectId,
+    });
+
+    console.log(result.data);
+    toast.success("Saved!");
+  };
 
   // Initial Frame shell once
   useEffect(() => {
@@ -162,33 +202,9 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
 
   // On save data context
   useEffect(() => {
+    console.log("running on save effect", onSaveData);
     onSaveData && onSaveCode();
   }, [onSaveData]);
-
-  // On Upadte code
-
-  const onSaveCode = () => {};
-  if (iframeRef.current) {
-    const iframeDoc =
-      iframeRef.current.contentDocument ||
-      iframeRef.current.contentWindow?.document;
-
-    if (iframeDoc) {
-      const clonedDoc = iframeDoc.documentElement.cloneNode(
-        true
-      ) as HTMLElement;
-      // Remove all outlines
-
-      const AllEls = clonedDoc.querySelectorAll<HTMLElement>("*");
-      AllEls.forEach((el) => {
-        el.style.outline = "";
-        el.style.cursor = "";
-      });
-
-      const html = clonedDoc.outerHTML;
-      console.log("clean html is : ", html);
-    }
-  }
 
   return (
     <div className="flex gap-2 w-full">

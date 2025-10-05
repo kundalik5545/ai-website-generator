@@ -37,7 +37,7 @@ function Header() {
           </SignInButton>
         ) : (
           <Link href={"/workspace"}>
-            <Button variant="ghost">Get Started</Button>
+            <Button variant="ghost">Go To Workspace</Button>
           </Link>
         )}
       </div>

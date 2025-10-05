@@ -15,20 +15,28 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
+import useSWR from "swr";
 
 export function AppSidebar() {
   const [projectList, setProjectList] = useState([]);
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
 
-  const GetProjectList = async () => {
-    const result = await axios.get("/api/get-all-projects");
-    console.log(result.data);
-    setProjectList(result.data);
-  };
+  const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+  const { data, error, isLoading } = useSWR(`/api/get-all-projects`, fetcher, {
+    refreshInterval: 10000,
+  });
+
+  // const GetProjectList = async () => {
+  //   const result = await axios.get("/api/get-all-projects");
+  //   console.log(result.data);
+  //   setProjectList(result.data);
+  // };
 
   useEffect(() => {
-    GetProjectList();
-  }, []);
+    // GetProjectList();
+    setProjectList(data || []);
+  }, [data]);
+
   return (
     <Sidebar>
       <SidebarHeader className="p-2 mt-2">

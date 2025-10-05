@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import WebPageTools from "./WebPageTools";
 import { cleanCode } from "@/lib/cleanCode";
+import ElementSetting from "./ElementSetting";
 
 type Props = {
   generatedCode: string;
@@ -11,6 +12,10 @@ type Props = {
 const WebsiteDesign = ({ generatedCode }: Props) => {
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const [selectedScreenSize, setSelectedScreenSize] = useState("web");
+
+  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
+    null
+  );
 
   // Initial Frame shell once
   useEffect(() => {
@@ -57,6 +62,9 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
       selectedEl.setAttribute("contenteditable", "true");
       selectedEl.focus();
       console.log("Selected element:", selectedEl.outerHTML);
+
+      // Update React state with the selected element
+      setSelectedElement(selectedEl);
     };
 
     const handleBlur = () => {
@@ -70,6 +78,8 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
         selectedEl.removeAttribute("contenteditable");
         selectedEl.removeEventListener("blur", handleBlur);
         selectedEl = null;
+        // Clear React state as well
+        setSelectedElement(null);
       }
     };
 
@@ -146,57 +156,34 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
   }, [generatedCode]);
 
   return (
-    <div className="flex flex-col items-center flex-1 p-5 ">
-      <iframe
-        ref={iframeRef}
-        title="Website Preview"
-        className={cn(
-          selectedScreenSize == "web" ? "w-full" : "w-100",
-          "h-[750px] border rounded-lg"
-        )}
-        sandbox="allow-scripts allow-same-origin allow-forms"
-      />
+    <div className="flex gap-2 w-full">
+      <div className="flex flex-col items-center p-2 w-full">
+        <iframe
+          ref={iframeRef}
+          title="Website Preview"
+          className={cn(
+            selectedScreenSize == "web" ? "w-full" : "w-100",
+            "h-[750px] border rounded-lg"
+          )}
+          sandbox="allow-scripts allow-same-origin allow-forms"
+        />
 
-      <WebPageTools
-        selectedScreenSize={selectedScreenSize}
-        setSelectedScreenSize={(v: string) => setSelectedScreenSize(v)}
-        generatedCode={generatedCode}
-      />
+        <WebPageTools
+          selectedScreenSize={selectedScreenSize}
+          setSelectedScreenSize={(v: string) => setSelectedScreenSize(v)}
+          generatedCode={generatedCode}
+        />
+      </div>
+
+      {/* Settings section */}
+      {selectedElement && (
+        <ElementSetting
+          selectedEl={selectedElement}
+          clearSelection={() => setSelectedElement(null)}
+        />
+      )}
     </div>
   );
 };
 
 export default WebsiteDesign;
-
-{
-  /* {generatedCode && generatedCode.length > 0 ? ( ) : (
-        <div className="flex items-center justify-center h-full">
-          <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto bg-blue-100 rounded-lg dark:bg-blue-900">
-              <svg
-                className="w-6 h-6 text-blue-600 dark:text-blue-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </div>
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
-              Website Preview
-            </h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 text-center">
-              Your website template will appear here.
-              <br /> Please wait AI is generating your code.
-            </p>
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          </div>
-        </div>
-      )} */
-}

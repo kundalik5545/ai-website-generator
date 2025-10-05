@@ -23,7 +23,6 @@ export type Messages = {
 };
 
 const Playground = () => {
-  const [selectedElement] = useState(false);
   const [frameDetails, setFrameDetails] = useState<Frame>();
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Messages[]>([]);
@@ -168,9 +167,6 @@ const Playground = () => {
 
         {/* Website Design section */}
         <WebsiteDesign generatedCode={generatedCode} />
-
-        {/* Settings section */}
-        {selectedElement && <ElementSetting />}
       </div>
     </div>
   );

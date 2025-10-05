@@ -1,7 +1,8 @@
-import { HTML_CODE } from "@/config/HtmlCode";
+import { HTML_CODE, HTML_CODE_limited } from "@/config/HtmlCode";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import WebPageTools from "./WebPageTools";
+import { cleanCode } from "@/lib/cleanCode";
 
 type Props = {
   generatedCode: string;
@@ -105,16 +106,6 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
       return;
     }
 
-    // My Old code to update iframe content
-    /**  if (root) {
-      root.innerHTML =
-        generatedCode
-          ?.replaceAll("```html", "")
-          ?.replaceAll("```", "")
-          .replaceAll("html", "") ?? "";
-      }
-  */
-
     // New code to update iframe content with script initialization
     try {
       // Clean the generated code more carefully
@@ -123,6 +114,7 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
       // Remove markdown code block markers only
       cleanedCode = cleanedCode.replace(/```html\n?/g, "");
       cleanedCode = cleanedCode.replace(/```\n?$/g, "");
+      cleanedCode = cleanedCode.replace(/body\n?$/g, "");
       cleanedCode = cleanedCode.trim();
 
       root.innerHTML = cleanedCode;

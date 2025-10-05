@@ -86,7 +86,7 @@ export const HTML_CODE_limited = `
 
            
         </head>
-        <body id="root">{codeis}</body> 
+        <body id="root"></body> 
       </html>
     `;
 

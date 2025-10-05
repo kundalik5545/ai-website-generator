@@ -5,7 +5,6 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ChatSection from "../_components/ChatSection";
-import ElementSetting from "../_components/ElementSetting";
 import PlaygoundHeader from "../_components/PlaygoundHeader";
 import WebsiteDesign from "../_components/WebsiteDesign";
 

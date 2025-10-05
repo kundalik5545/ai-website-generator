@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import ImageKit from "imagekit";
 import {
   Crop,
   Expand,
@@ -19,9 +20,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import React from "react";
-import ImageKit from "imagekit";
-import { set } from "react-hook-form";
-import { transform } from "next/dist/build/swc/generated-native";
 
 type Props = {
   selectedEl: HTMLImageElement;
@@ -108,7 +106,6 @@ const ImageSettingSection = ({ selectedEl }: Props) => {
       isPublished: true,
     });
 
-    console.log("Upload Success:", imageRef);
     // @ts-expect-error
     selectedEl.setAttribute("src", imageRef?.url + "?tr=");
     setLoading(false);

@@ -13,12 +13,11 @@ import {
   Expand,
   ImageIcon,
   ImageMinus,
-  ImagePlayIcon,
   ImagePlus,
   ImageUpscale,
   Sparkles,
 } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 type Props = {
   selectedEl: HTMLImageElement;

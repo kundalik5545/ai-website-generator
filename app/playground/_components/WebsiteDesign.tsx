@@ -1,10 +1,9 @@
-import { HTML_CODE, HTML_CODE_limited } from "@/config/HtmlCode";
+import { HTML_CODE } from "@/config/HtmlCode";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
-import WebPageTools from "./WebPageTools";
-import { cleanCode } from "@/lib/cleanCode";
 import ElementSetting from "./ElementSetting";
 import ImageSettingSection from "./ImageSettingSection";
+import WebPageTools from "./WebPageTools";
 
 type Props = {
   generatedCode: string;
@@ -185,6 +184,7 @@ const WebsiteDesign = ({ generatedCode }: Props) => {
       )} */}
 
       {selectedElement?.tagName === "IMG" ? (
+        // @ts-expect-error
         <ImageSettingSection selectedEl={selectedElement} />
       ) : selectedElement ? (
         <ElementSetting

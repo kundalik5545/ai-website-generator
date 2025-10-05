@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Website Generator
+
+A free, powerful AI-driven website generator that creates beautiful, responsive websites using artificial intelligence.
+
+## Features
+
+- 🤖 AI-powered website generation
+- 📱 Responsive design templates
+- ⚡ Fast and lightweight
+- 🎨 Customizable themes
+- 🚀 One-click deployment
+- 💰 Completely free to use
 
 ## Getting Started
 
@@ -14,23 +25,27 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [https://free-ai-website-generator.vercel.app/](https://free-ai-website-generator.vercel.app/) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Describe Your Website** - Tell the AI what kind of website you want
+2. **AI Generation** - Our AI creates a custom website based on your requirements
+3. **Customize** - Fine-tune colors, fonts, and layout to match your vision
+4. **Deploy** - Launch your website with a single click
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: Next.js 14
+- **Styling**: Tailwind CSS
+- **AI Integration**: OpenAI API
+- **Deployment**: Vercel
+- **Language**: TypeScript
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the [MIT License](LICENSE).
